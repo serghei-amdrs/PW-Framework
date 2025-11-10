@@ -1,10 +1,13 @@
-
+.vscode/
+.github/
 # Playwright
 node_modules/
+tests/seed.spec.ts
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+.playwright-mcp/
 # Environment files
 .env.*
