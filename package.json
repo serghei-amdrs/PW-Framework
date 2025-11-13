@@ -3,12 +3,24 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "npx playwright test --project=chromium",
+    "ci": "npx playwright test --project=chromium --workers=1",
+    "flaky": "npx playwright test --project=chromium --repeat-each=20",
+    "debug": "npx playwright test --project=chromium --debug",
+    "ui": "npx playwright test --project=chromium --ui",
+    "smoke": "npx playwright test --grep @Smoke --project=chromium",
+    "sanity": "npx playwright test --grep @Sanity --project=chromium",
+    "api": "npx playwright test --grep @Api --project=chromium",
+    "regression": "npx playwright test --grep @Regression --project=chromium",
+    "fullTest": "npx playwright test"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@faker-js/faker": "^10.1.0",
     "@playwright/test": "^1.56.1",
     "@types/dotenv": "^6.1.1",
     "@types/node": "^24.10.0"
