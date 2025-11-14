@@ -2,13 +2,13 @@ import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 
 // Determine which environment file to load
-const environmentPath = process.env.ENVIRONMENT 
-    ? `./env/.env.${process.env.ENVIRONMENT}`
-    : `./env/.env.dev`; // Default to dev environment
+const environmentPath = process.env.ENVIRONMENT
+  ? `./env/.env.${process.env.ENVIRONMENT}`
+  : `./env/.env.dev`; // Default to dev environment
 
 // Load the environment variables
 dotenv.config({
-    path: environmentPath,
+  path: environmentPath,
 });
 
 export default defineConfig({
@@ -35,8 +35,21 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
+      name: 'setup',
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1366, height: 768 },
+      },
+      testMatch: /.*\.setup\.ts/,
+    },
+    {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: '.auth/userSession.json',
+        viewport: { width: 1366, height: 768 },
+      },
+      dependencies: ['setup'],
     },
 
     {

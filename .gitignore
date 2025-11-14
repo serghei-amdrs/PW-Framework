@@ -11,3 +11,5 @@ tests/seed.spec.ts
 .playwright-mcp/
 # Environment files
 .env.*
+# Authentication User file
+userSession.json
