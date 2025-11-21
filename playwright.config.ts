@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 // Determine which environment file to load
 const environmentPath = process.env.ENVIRONMENT
   ? `./env/.env.${process.env.ENVIRONMENT}`
-  : `./env/.env.dev`; // Default to dev environment
+  : `./env/.env.dev`; // dev | local
 
 // Load the environment variables
 dotenv.config({

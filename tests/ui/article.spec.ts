@@ -10,10 +10,6 @@ test.describe('Verify Publish/Edit/Delete an Article', () => {
 
     test.beforeEach(async ({ homePage }) => {
         await homePage.navigateToHomePageUser();
-        await homePage.signIn(
-            process.env.EMAIL as string,
-            process.env.PASSWORD as string
-        );
     });
 
     test.afterEach(async ({ page }) => {
