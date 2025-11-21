@@ -46,6 +46,7 @@ jobs:
               uses: ./.github/actions/playwright-report
               with:
                   test-step-outcome: ${{ steps.smoke.outcome }}
+                  blob-report-upload: 'true'
 
     sanity-test:
         name: Sanity Test
@@ -70,6 +71,7 @@ jobs:
               uses: ./.github/actions/playwright-report
               with:
                   test-step-outcome: ${{ steps.sanity.outcome }}
+                  blob-report-upload: 'true'
 
     api-test:
         name: API Test
@@ -94,6 +96,7 @@ jobs:
               uses: ./.github/actions/playwright-report
               with:
                   test-step-outcome: ${{ steps.api.outcome }}
+                  blob-report-upload: 'true'
 
     regression-test:
         name: Regression Test
@@ -118,6 +121,7 @@ jobs:
               uses: ./.github/actions/playwright-report
               with:
                   test-step-outcome: ${{ steps.regression.outcome }}
+                  blob-report-upload: 'true'
 
     merge-report:
         name: Merge Report
@@ -132,7 +136,7 @@ jobs:
             - name: Setup Node.js
               uses: actions/setup-node@v4
               with:
-                  node-version: ^24.10.0
+                  node-version: lts/*
 
             - name: Install Dependencies
               run: npm ci
@@ -180,7 +184,7 @@ jobs:
         needs: build-report
         environment:
             name: github-pages
-            url: 'https://idavidov13.github.io/Playwright-Framework/'
+            url: ${{ steps.deployment.outputs.page_url }}
         runs-on: ubuntu-latest
         steps:
             - name: Deploy to GitHub Pages
