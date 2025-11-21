@@ -1,5 +1,5 @@
 .vscode/
-.github/
+.github/chatmodes/
 # Playwright
 node_modules/
 tests/seed.spec.ts
