@@ -8,10 +8,11 @@
     "ci": "npx playwright test --project=chromium --workers=1",
     "flaky": "npx playwright test --project=chromium --repeat-each=20",
     "debug": "npx playwright test --project=chromium --debug",
-    "ui": "npx playwright test --project=chromium --ui",
+    "ui-mode": "npx playwright test --project=chromium --ui",
     "smoke": "npx playwright test --grep @Smoke --project=chromium",
     "sanity": "npx playwright test --grep @Sanity --project=chromium",
     "api": "npx playwright test --grep @Api --project=chromium",
+    "ui": "npx playwright test --grep @UI --project=chromium",
     "regression": "npx playwright test --grep @Regression --project=chromium",
     "fullTest": "npx playwright test"
   },

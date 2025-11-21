@@ -4,7 +4,7 @@ import { test, expect } from '../../fixtures/pom/test-options';
 import articleData from '../../test-data/articleData.json';
 
 test.describe('Verify CRUD for Article', () => {
-    test('Verify Create/Read/Update/Delete an Article', { tag: '@Api' },
+    test('Verify Create/Read/Update/Delete an Article', { tag: ['@API', '@Regression'] },
         async ({ apiRequest }) => {
             let articleId: string;
             await test.step('Verify Create an Article', async () => {

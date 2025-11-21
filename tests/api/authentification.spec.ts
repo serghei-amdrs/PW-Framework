@@ -4,7 +4,7 @@ import { test, expect } from '../../fixtures/pom/test-options';
 import invalidCredentials from '../../test-data/invalidCredentials.json';
 
 test.describe('Verify API Validation for Log In / Sign Up', () => {
-    test('Verify API Validation for Log In', { tag: '@Api' }, async ({ apiRequest }) => {
+    test('Verify API Validation for Log In with invalid credentials', { tag: ['@Api', '@Sanity'] }, async ({ apiRequest }) => {
         const { status, body } = await apiRequest<ErrorResponse>({
             method: 'POST',
             url: 'api/users/login',
@@ -22,7 +22,7 @@ test.describe('Verify API Validation for Log In / Sign Up', () => {
     }
     );
 
-    test('Verify API Validation for Sign Up', { tag: '@Api' }, async ({ apiRequest }) => {
+    test('Verify API Validation for Sign Up', { tag: ['@Api', '@Smoke'] }, async ({ apiRequest }) => {
         await test.step('Verify API Validation for Invalid Email', async () => {
             for (const invalidEmail of invalidCredentials.invalidEmails) {
                 const { status, body } = await apiRequest<ErrorResponse>({
@@ -43,7 +43,7 @@ test.describe('Verify API Validation for Log In / Sign Up', () => {
             }
         });
 
-        await test.step('Verify API Validation for Invalid Password', async () => {
+         await test.step('Verify API Validation for Invalid Password', async () => {
             for (const invalidPassword of invalidCredentials.invalidPasswords) {
                 const { status, body } = await apiRequest<ErrorResponse>({
                     method: 'POST',
