@@ -1,6 +1,6 @@
-import { test as base, mergeTests, request } from '@playwright/test';
-import { test as pageObjectFixture } from './page-object-fixture';
-import { test as apiRequestFixture } from '../api/api-request-fixture';
+import { test as base, mergeTests, request } from "@playwright/test";
+import { test as pageObjectFixture } from "./page-object-fixture";
+import { test as apiRequestFixture } from "../api/api-request-fixture";
 
 const test = mergeTests(pageObjectFixture, apiRequestFixture);
 
