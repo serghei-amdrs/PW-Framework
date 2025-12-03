@@ -1,11 +1,11 @@
 import { test, expect } from '../../fixtures/pom/page-object-fixture';
-import { faker } from '@faker-js/faker';
+import { ArticleBuilder } from '../../test-data/builders';
 
 test.describe('Article CRUD Operations', { tag: ['@UI', '@Regression'] }, () => {
-  const randomArticleTitle = faker.lorem.words(3);
-  const randomArticleDescription = faker.lorem.sentence();
-  const randomArticleBody = faker.lorem.paragraphs(2);
-  const randomArticleTag = faker.lorem.word();
+  // Use ArticleBuilder for test data
+  const articleBuilder = new ArticleBuilder();
+  const articleData = articleBuilder.buildFormData();
+  const updatedArticleData = articleBuilder.buildUpdated();
 
   test.beforeEach(async ({ homePage }) => {
     await homePage.navigateAsUser();
@@ -28,10 +28,10 @@ test.describe('Article CRUD Operations', { tag: ['@UI', '@Regression'] }, () => 
       );
 
       await articleEditorPage.publishArticle(
-        randomArticleTitle,
-        randomArticleDescription,
-        randomArticleBody,
-        randomArticleTag
+        articleData.title,
+        articleData.description,
+        articleData.body,
+        articleData.tags
       );
 
       const response = await responsePromise;
@@ -42,12 +42,12 @@ test.describe('Article CRUD Operations', { tag: ['@UI', '@Regression'] }, () => 
     await test.step('Edit the article', async () => {
       await articleViewPage.clickEditArticle();
 
-      await expect(articleEditorPage.titleInput).toHaveValue(randomArticleTitle);
+      await expect(articleEditorPage.titleInput).toHaveValue(articleData.title);
 
       await articleEditorPage.updateArticle(
-        `Updated ${randomArticleTitle}`,
-        `Updated ${randomArticleDescription}`,
-        `Updated ${randomArticleBody}`
+        updatedArticleData.title,
+        updatedArticleData.description,
+        updatedArticleData.body
       );
     });
 
