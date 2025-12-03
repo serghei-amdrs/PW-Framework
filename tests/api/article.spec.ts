@@ -1,84 +1,94 @@
-import { ArticleResponseSchema } from "../../fixtures/api/schemas";
-import { ArticleResponse } from "../../fixtures/api/types-guards";
-import { test, expect } from "../../fixtures/pom/test-options";
-import articleData from "../../test-data/articleData.json";
+import { ArticleResponseSchema } from '../../fixtures/api/schemas';
+import { ArticleResponse } from '../../fixtures/api/types-guards';
+import { test, expect } from '../../fixtures/pom/test-options';
+import { ArticleBuilder } from '../../test-data/builders';
+import { HTTP_STATUS, API_ENDPOINTS } from '../../test-data/constants';
 
-test.describe("Verify CRUD for Article", () => {
+test.describe('Article API CRUD Operations', () => {
   test(
-    "Verify Create/Read/Update/Delete an Article",
-    { tag: ["@API", "@Regression"] },
+    'should create, read, update, and delete an article via API',
+    { tag: ['@API', '@Regression'] },
     async ({ apiRequest }) => {
-      let articleId: string;
-      await test.step("Verify Create an Article", async () => {
-        const { status, body } = await apiRequest<ArticleResponse>({
-          method: "POST",
-          url: "api/articles/",
-          baseUrl: process.env.API_URL,
-          body: articleData.create,
-          headers: process.env.ACCESS_TOKEN,
-        });
-        expect(status).toBe(201);
-        expect(ArticleResponseSchema.parse(body)).toBeTruthy();
-        articleId = body.article.slug;
-      });
+      // Use ArticleBuilder for test data
+      const articleBuilder = new ArticleBuilder().withTimestampPrefix();
+      const createPayload = articleBuilder.buildPayload();
+      const updatePayload = articleBuilder.buildUpdatedPayload();
 
-      await test.step("Verify Read an Article", async () => {
-        const { status, body } = await apiRequest<ArticleResponse>({
-          method: "GET",
-          url: `api/articles/${articleId}`,
-          baseUrl: process.env.API_URL,
-        });
+      let articleSlug: string;
 
-        expect(status).toBe(200);
-        expect(ArticleResponseSchema.parse(body)).toBeTruthy();
-      });
-
-      await test.step("Verify Update an Article", async () => {
+      await test.step('Create an article', async () => {
         const { status, body } = await apiRequest<ArticleResponse>({
-          method: "PUT",
-          url: `api/articles/${articleId}`,
+          method: 'POST',
+          url: `${API_ENDPOINTS.articles.base}/`,
           baseUrl: process.env.API_URL,
-          body: articleData.update,
+          body: createPayload as unknown as Record<string, unknown>,
           headers: process.env.ACCESS_TOKEN,
         });
 
-        expect(status).toBe(200);
+        expect(status).toBe(HTTP_STATUS.CREATED);
         expect(ArticleResponseSchema.parse(body)).toBeTruthy();
-        expect(body.article.title).toBe(articleData.update.article.title);
-        articleId = body.article.slug;
+        expect(body.article.title).toBe(createPayload.article.title);
+        articleSlug = body.article.slug;
       });
 
-      await test.step("Verify Read an Article", async () => {
+      await test.step('Read the article', async () => {
         const { status, body } = await apiRequest<ArticleResponse>({
-          method: "GET",
-          url: `api/articles/${articleId}`,
+          method: 'GET',
+          url: API_ENDPOINTS.articles.bySlug(articleSlug),
           baseUrl: process.env.API_URL,
         });
 
-        expect(status).toBe(200);
+        expect(status).toBe(HTTP_STATUS.OK);
         expect(ArticleResponseSchema.parse(body)).toBeTruthy();
-        expect(body.article.title).toBe(articleData.update.article.title);
+        expect(body.article.title).toBe(createPayload.article.title);
       });
 
-      await test.step("Verify Delete an Article", async () => {
-        const { status, body } = await apiRequest({
-          method: "DELETE",
-          url: `api/articles/${articleId}`,
+      await test.step('Update the article', async () => {
+        const { status, body } = await apiRequest<ArticleResponse>({
+          method: 'PUT',
+          url: API_ENDPOINTS.articles.bySlug(articleSlug),
+          baseUrl: process.env.API_URL,
+          body: updatePayload as unknown as Record<string, unknown>,
+          headers: process.env.ACCESS_TOKEN,
+        });
+
+        expect(status).toBe(HTTP_STATUS.OK);
+        expect(ArticleResponseSchema.parse(body)).toBeTruthy();
+        expect(body.article.title).toBe(updatePayload.article.title);
+        articleSlug = body.article.slug;
+      });
+
+      await test.step('Verify article was updated', async () => {
+        const { status, body } = await apiRequest<ArticleResponse>({
+          method: 'GET',
+          url: API_ENDPOINTS.articles.bySlug(articleSlug),
+          baseUrl: process.env.API_URL,
+        });
+
+        expect(status).toBe(HTTP_STATUS.OK);
+        expect(ArticleResponseSchema.parse(body)).toBeTruthy();
+        expect(body.article.title).toBe(updatePayload.article.title);
+      });
+
+      await test.step('Delete the article', async () => {
+        const { status } = await apiRequest({
+          method: 'DELETE',
+          url: API_ENDPOINTS.articles.bySlug(articleSlug),
           baseUrl: process.env.API_URL,
           headers: process.env.ACCESS_TOKEN,
         });
 
-        expect(status).toBe(204);
+        expect(status).toBe(HTTP_STATUS.NO_CONTENT);
       });
 
-      await test.step("Verify the Article is deleted", async () => {
-        const { status, body } = await apiRequest({
-          method: "GET",
-          url: `api/articles/${articleId}`,
+      await test.step('Verify article was deleted', async () => {
+        const { status } = await apiRequest({
+          method: 'GET',
+          url: API_ENDPOINTS.articles.bySlug(articleSlug),
           baseUrl: process.env.API_URL,
         });
 
-        expect(status).toBe(404);
+        expect(status).toBe(HTTP_STATUS.NOT_FOUND);
       });
     }
   );

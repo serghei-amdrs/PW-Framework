@@ -5,7 +5,7 @@ inputs:
     description: "Outcome of the test step (success or failure)"
     required: true
   blob-report-upload:
-    description: "Wheather to always upload blob report as artifact or only on failure"
+    description: "Whether to always upload blob report as artifact or only on failure"
     required: false
     default: "false"
   blob-report-retention-days:

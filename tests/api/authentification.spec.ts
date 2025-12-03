@@ -1,90 +1,96 @@
-import { ErrorResponseSchema } from "../../fixtures/api/schemas";
-import { ErrorResponse } from "../../fixtures/api/types-guards";
-import { test, expect } from "../../fixtures/pom/test-options";
-import invalidCredentials from "../../test-data/invalidCredentials.json";
+import { ErrorResponseSchema } from '../../fixtures/api/schemas';
+import { ErrorResponse } from '../../fixtures/api/types-guards';
+import { test, expect } from '../../fixtures/pom/test-options';
+import {
+  INVALID_EMAILS,
+  INVALID_PASSWORDS,
+  INVALID_USERNAMES,
+  HTTP_STATUS,
+  API_ENDPOINTS,
+} from '../../test-data/constants';
 
-test.describe("Verify API Validation for Log In / Sign Up", () => {
+test.describe('Authentication API Validation', () => {
   test(
-    "Verify API Validation for Log In with invalid credentials",
-    { tag: ["@Api", "@Sanity"] },
+    'should reject login with invalid credentials',
+    { tag: ['@Api', '@Sanity'] },
     async ({ apiRequest }) => {
       const { status, body } = await apiRequest<ErrorResponse>({
-        method: "POST",
-        url: "api/users/login",
+        method: 'POST',
+        url: API_ENDPOINTS.users.login,
         baseUrl: process.env.API_URL,
         body: {
           user: {
-            email: invalidCredentials.invalidEmails[0],
-            password: invalidCredentials.invalidPasswords[0],
+            email: INVALID_EMAILS[0],
+            password: INVALID_PASSWORDS[0],
           },
         },
       });
 
-      expect(status).toBe(403);
+      expect(status).toBe(HTTP_STATUS.FORBIDDEN);
       expect(ErrorResponseSchema.parse(body)).toBeTruthy();
     }
   );
 
   test(
-    "Verify API Validation for Sign Up",
-    { tag: ["@Api", "@Smoke"] },
+    'should validate registration input',
+    { tag: ['@Api', '@Smoke'] },
     async ({ apiRequest }) => {
-      await test.step("Verify API Validation for Invalid Email", async () => {
-        for (const invalidEmail of invalidCredentials.invalidEmails) {
+      await test.step('Reject invalid emails', async () => {
+        for (const invalidEmail of INVALID_EMAILS) {
           const { status, body } = await apiRequest<ErrorResponse>({
-            method: "POST",
-            url: "api/users",
+            method: 'POST',
+            url: API_ENDPOINTS.users.register,
             baseUrl: process.env.API_URL,
             body: {
               user: {
                 email: invalidEmail,
-                password: "8charact",
-                username: "testuser",
+                password: '8charact',
+                username: 'testuser',
               },
             },
           });
 
-          expect(status).toBe(422);
+          expect(status).toBe(HTTP_STATUS.UNPROCESSABLE_ENTITY);
           expect(ErrorResponseSchema.parse(body)).toBeTruthy();
         }
       });
 
-      await test.step("Verify API Validation for Invalid Password", async () => {
-        for (const invalidPassword of invalidCredentials.invalidPasswords) {
+      await test.step('Reject invalid passwords', async () => {
+        for (const invalidPassword of INVALID_PASSWORDS) {
           const { status, body } = await apiRequest<ErrorResponse>({
-            method: "POST",
-            url: "api/users",
+            method: 'POST',
+            url: API_ENDPOINTS.users.register,
             baseUrl: process.env.API_URL,
             body: {
               user: {
-                email: "validEmail@test.com",
+                email: 'validEmail@test.com',
                 password: invalidPassword,
-                username: "testuser",
+                username: 'testuser',
               },
             },
           });
 
-          expect(status).toBe(422);
+          expect(status).toBe(HTTP_STATUS.UNPROCESSABLE_ENTITY);
           expect(ErrorResponseSchema.parse(body)).toBeTruthy();
         }
       });
 
-      await test.step("Verify API Validation for Invalid Email", async () => {
-        for (const invalidUsername of invalidCredentials.invalidUsernames) {
+      await test.step('Reject invalid usernames', async () => {
+        for (const invalidUsername of INVALID_USERNAMES) {
           const { status, body } = await apiRequest<ErrorResponse>({
-            method: "POST",
-            url: "api/users",
+            method: 'POST',
+            url: API_ENDPOINTS.users.register,
             baseUrl: process.env.API_URL,
             body: {
               user: {
-                email: "validEmail@test.com",
-                password: "8charact",
+                email: 'validEmail@test.com',
+                password: '8charact',
                 username: invalidUsername,
               },
             },
           });
 
-          expect(status).toBe(422);
+          expect(status).toBe(HTTP_STATUS.UNPROCESSABLE_ENTITY);
           expect(ErrorResponseSchema.parse(body)).toBeTruthy();
         }
       });

@@ -2,7 +2,7 @@ name: Playwright Tests on Custom Runner Extended
 
 on:
   push:
-    branches: [main, master]
+    branches: ['**']
   pull_request:
     branches: [main, master]
   workflow_dispatch:
@@ -20,7 +20,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: 'pages'
   cancel-in-progress: false
 
 jobs:
@@ -39,14 +39,14 @@ jobs:
 
       - name: Run Smoke tests
         id: smoke
-        run: npm run smoke
+        run: npm run smoke -- --retries=1
 
       - name: Upload Playwright Report
         if: always()
         uses: ./.github/actions/playwright-report
         with:
           test-step-outcome: ${{ steps.smoke.outcome }}
-          blob-report-upload: "true"
+          blob-report-upload: 'true'
 
   sanity-test:
     name: Sanity Test
@@ -64,14 +64,14 @@ jobs:
 
       - name: Run Sanity tests
         id: sanity
-        run: npm run sanity
+        run: npm run sanity -- --retries=1
 
       - name: Upload Playwright Report
         if: always()
         uses: ./.github/actions/playwright-report
         with:
           test-step-outcome: ${{ steps.sanity.outcome }}
-          blob-report-upload: "true"
+          blob-report-upload: 'true'
 
   api-test:
     name: API Test
@@ -89,14 +89,14 @@ jobs:
 
       - name: Run API tests
         id: api
-        run: npm run api
+        run: npm run api-tests -- --retries=1
 
       - name: Upload Playwright Report
         if: always()
         uses: ./.github/actions/playwright-report
         with:
           test-step-outcome: ${{ steps.api.outcome }}
-          blob-report-upload: "true"
+          blob-report-upload: 'true'
 
   regression-test:
     name: Regression Test
@@ -114,14 +114,14 @@ jobs:
 
       - name: Run Regression tests
         id: regression
-        run: npm run regression
+        run: npm run regression -- --retries=1
 
       - name: Upload Playwright Report
         if: always()
         uses: ./.github/actions/playwright-report
         with:
           test-step-outcome: ${{ steps.regression.outcome }}
-          blob-report-upload: "true"
+          blob-report-upload: 'true'
 
   merge-report:
     name: Merge Report
@@ -136,7 +136,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: ^24.10.0
 
       - name: Install Dependencies
         run: npm ci
@@ -160,7 +160,7 @@ jobs:
 
   build-report:
     name: Build Report
-    if: always()
+    if: always() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     needs: merge-report
     runs-on: ubuntu-latest
     steps:
@@ -178,9 +178,9 @@ jobs:
         with:
           path: ./_site
 
-  depoloy-report:
+  deploy-report:
     name: Deploy Report
-    if: always()
+    if: always() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     needs: build-report
     environment:
       name: github-pages
