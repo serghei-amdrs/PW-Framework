@@ -1,5 +1,6 @@
 .vscode/
 .github/chatmodes/
+
 # Playwright
 node_modules/
 tests/seed.spec.ts
@@ -9,7 +10,24 @@ tests/seed.spec.ts
 /playwright/.cache/
 /playwright/.auth/
 .playwright-mcp/
+
+# Build output
+/dist/
+
 # Environment files
 .env.*
+env/.env.*
+!env/.env.example
+
 # Authentication User file
+.auth/
 userSession.json
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
